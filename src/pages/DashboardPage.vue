@@ -35,17 +35,15 @@ const totalEmployees = computed(() => {
 onMounted(async () => {
   const data = await loadInitialData();
   if (data) {
-    // Load products
     if (data.products) {
       productStore.products.value = data.products;
+      console.log(productStore.products.value)
     }
 
-    // Load employees
     if (data.employees) {
       employeeStore.employees.value = data.employees;
     }
 
-    // Load chart data
     if (data.revenue) {
       chartStore.revenue.value = data.revenue;
     }

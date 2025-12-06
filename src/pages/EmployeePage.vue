@@ -1,7 +1,21 @@
 <script setup>
+import { onMounted } from "vue";
+import { storeToRefs } from "pinia";
 import DefaultLayout from "../layouts/DefaultLayout.vue";
 import EmployeeForm from "../components/employees/EmployeeForm.vue";
 import EmployeeTable from "../components/employees/EmployeeTable.vue";
+import { useEmployeeStore } from "../store/employeeStore";
+import { loadInitialData } from "../services/dataService";
+
+const employeeStore = useEmployeeStore();
+const { employees } = storeToRefs(employeeStore);
+
+onMounted(async () => {
+  if (employees.value.length === 0) {
+    const data = await loadInitialData();
+    employees.value = data.employees;
+  }
+});
 </script>
 
 <template>

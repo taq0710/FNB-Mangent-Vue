@@ -8,5 +8,19 @@ export const useProductStore = defineStore("productStore", () => {
     products.value.push(product);
   }
 
-  return { products, addProduct };
+  function deleteProduct(productId) {
+    const index = products.value.findIndex((p) => p.id === productId);
+    if (index > -1) {
+      products.value.splice(index, 1);
+    }
+  }
+
+  function updateProduct(productId, updatedProduct) {
+    const index = products.value.findIndex((p) => p.id === productId);
+    if (index > -1) {
+      products.value[index] = { ...products.value[index], ...updatedProduct };
+    }
+  }
+
+  return { products, addProduct, deleteProduct, updateProduct };
 });

@@ -1,22 +1,3 @@
-<template>
-  <div class="chart-container">
-    <h3>Doanh thu</h3>
-    <div class="chart-controls">
-      <button
-        v-for="period in periods"
-        :key="period"
-        @click="selectedPeriod = period"
-        :class="{ active: selectedPeriod === period }"
-      >
-        {{ periodLabels[period] }}
-      </button>
-    </div>
-    <div class="chart-wrapper">
-      <Line :data="chartData" :options="chartOptions" />
-    </div>
-  </div>
-</template>
-
 <script setup>
 import { computed, ref } from "vue";
 import { Line } from "vue-chartjs";
@@ -135,6 +116,27 @@ const chartOptions = {
   },
 };
 </script>
+
+<template>
+  <div class="chart-container">
+    <h3>Doanh thu</h3>
+    <div class="chart-controls">
+      <button
+        v-for="period in periods"
+        :key="period"
+        @click="selectedPeriod = period"
+        :class="{ active: selectedPeriod === period }"
+      >
+        {{ periodLabels[period] }}
+      </button>
+    </div>
+    <div class="chart-wrapper">
+      <Line :data="chartData" :options="chartOptions" />
+    </div>
+  </div>
+</template>
+
+
 
 <style scoped>
 .chart-container {

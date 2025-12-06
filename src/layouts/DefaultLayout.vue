@@ -25,6 +25,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  height: 100%;
 }
 
 .sidebar a {
@@ -41,5 +42,9 @@
 .content {
   flex: 1;
   padding: 20px;
+  overflow: auto;
+}
+.content::-webkit-scrollbar {
+  display: none;
 }
 </style>

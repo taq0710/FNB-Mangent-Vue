@@ -45,46 +45,58 @@
   ],
   "employees": [
     {
-      "id": "NV0001",
+      "employeeId": "NV0001",
       "name": "Nguyễn Văn An",
-      "position": "Nhân viên bán hàng",
-      "salary": 8000000,
-      "hireDate": "2023-01-15"
+      "birthDate": "1995-05-15",
+      "citizenId": "001095001234",
+      "salaryPerHour": 50000,
+      "monthlyHours": 160,
+      "totalSalary": 8000000
     },
     {
-      "id": "NV0002",
+      "employeeId": "NV0002",
       "name": "Trần Thị Bình",
-      "position": "Quản lý cửa hàng",
-      "salary": 15000000,
-      "hireDate": "2022-06-20"
+      "birthDate": "1990-03-20",
+      "citizenId": "001090002345",
+      "salaryPerHour": 100000,
+      "monthlyHours": 150,
+      "totalSalary": 15000000
     },
     {
-      "id": "NV0003",
+      "employeeId": "NV0003",
       "name": "Lê Văn Cường",
-      "position": "Nhân viên bán hàng",
-      "salary": 8500000,
-      "hireDate": "2023-03-10"
+      "birthDate": "1996-08-10",
+      "citizenId": "001096003456",
+      "salaryPerHour": 55000,
+      "monthlyHours": 160,
+      "totalSalary": 8800000
     },
     {
-      "id": "NV0004",
+      "employeeId": "NV0004",
       "name": "Phạm Thị Dung",
-      "position": "Kế toán",
-      "salary": 12000000,
-      "hireDate": "2022-11-05"
+      "birthDate": "1992-11-25",
+      "citizenId": "001092004567",
+      "salaryPerHour": 80000,
+      "monthlyHours": 150,
+      "totalSalary": 12000000
     },
     {
-      "id": "NV0005",
+      "employeeId": "NV0005",
       "name": "Hoàng Văn Em",
-      "position": "Nhân viên kho",
-      "salary": 7000000,
-      "hireDate": "2023-05-12"
+      "birthDate": "1997-02-14",
+      "citizenId": "001097005678",
+      "salaryPerHour": 45000,
+      "monthlyHours": 160,
+      "totalSalary": 7200000
     },
     {
-      "id": "NV0006",
+      "employeeId": "NV0006",
       "name": "Vũ Thị Phương",
-      "position": "Nhân viên bán hàng",
-      "salary": 8200000,
-      "hireDate": "2023-07-18"
+      "birthDate": "1994-07-08",
+      "citizenId": "001094006789",
+      "salaryPerHour": 52000,
+      "monthlyHours": 160,
+      "totalSalary": 8320000
     }
   ],
   "revenue": {
