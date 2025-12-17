@@ -1,15 +1,17 @@
-<script setup>
-import { ref } from "vue";
+<script setup lang="ts">
+import { ref, computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useEmployeeStore } from "../../store/employeeStore";
 import BaseInput from "../common/BaseInput.vue";
 import NumberInput from "../common/NumberInput.vue";
 import DateInput from "../common/DateInput.vue";
+import Button from "../common/Button.vue";
+import type { Employee } from "../../store/employeeStore";
 
 const employeeStore = useEmployeeStore();
 const { employees } = storeToRefs(employeeStore);
 
-const editingEmployee = ref(null);
+const editingEmployee = ref<string | null>(null);
 const editForm = ref({
   name: "",
   birthDate: "",
@@ -18,7 +20,42 @@ const editForm = ref({
   monthlyHours: "",
 });
 
-function startEdit(employee) {
+// Filter và Sort
+const salaryFilter = ref("");
+const birthDateSort = ref<"none" | "oldest" | "newest">("none");
+const salarySort = ref<"none" | "low" | "high">("none");
+
+const filteredAndSortedEmployees = computed(() => {
+  let result = [...employees.value];
+
+  // Filter theo lương
+  if (salaryFilter.value) {
+    const filterValue = Number(salaryFilter.value);
+    result = result.filter((e) => e.totalSalary <= filterValue);
+  }
+
+  // Sort theo ngày sinh
+  if (birthDateSort.value !== "none") {
+    result.sort((a, b) => {
+      const dateA = new Date(a.birthDate).getTime();
+      const dateB = new Date(b.birthDate).getTime();
+      return birthDateSort.value === "oldest" ? dateA - dateB : dateB - dateA;
+    });
+  }
+
+  // Sort theo lương
+  if (salarySort.value !== "none") {
+    result.sort((a, b) => {
+      return salarySort.value === "low"
+        ? a.totalSalary - b.totalSalary
+        : b.totalSalary - a.totalSalary;
+    });
+  }
+
+  return result;
+});
+
+function startEdit(employee: Employee) {
   editingEmployee.value = employee.employeeId;
   editForm.value = {
     name: employee.name,
@@ -40,7 +77,7 @@ function cancelEdit() {
   };
 }
 
-function saveEdit(employeeId) {
+function saveEdit(employeeId: string) {
   employeeStore.updateEmployee(employeeId, {
     name: editForm.value.name,
     birthDate: editForm.value.birthDate,
@@ -51,15 +88,61 @@ function saveEdit(employeeId) {
   cancelEdit();
 }
 
-function deleteEmployee(employeeId) {
+function deleteEmployee(employeeId: string) {
   if (confirm("Bạn có chắc chắn muốn xóa nhân viên này?")) {
     employeeStore.deleteEmployee(employeeId);
   }
+}
+
+function formatDate(dateString: string): string {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  return date.toLocaleDateString("vi-VN");
+}
+
+function resetFilters() {
+  salaryFilter.value = "";
+  birthDateSort.value = "none";
+  salarySort.value = "none";
 }
 </script>
 
 <template>
   <div class="table-container">
+    <!-- Filter và Sort Controls -->
+    <div class="filter-controls">
+      <div class="filter-group">
+        <label>Lọc theo lương tối đa:</label>
+        <NumberInput
+          v-model="salaryFilter"
+          placeholder="Nhập lương tối đa"
+          label=""
+        />
+      </div>
+
+      <div class="sort-group">
+        <label>Sắp xếp theo ngày sinh:</label>
+        <select v-model="birthDateSort" class="sort-select">
+          <option value="none">Không sắp xếp</option>
+          <option value="oldest">Cũ nhất → Mới nhất</option>
+          <option value="newest">Mới nhất → Cũ nhất</option>
+        </select>
+      </div>
+
+      <div class="sort-group">
+        <label>Sắp xếp theo lương:</label>
+        <select v-model="salarySort" class="sort-select">
+          <option value="none">Không sắp xếp</option>
+          <option value="low">Thấp → Cao</option>
+          <option value="high">Cao → Thấp</option>
+        </select>
+      </div>
+
+      <Button @click="resetFilters" variant="primary" class="reset-btn">
+        Đặt lại
+      </Button>
+    </div>
+
     <table class="data-table">
       <thead>
         <tr>
@@ -74,50 +157,95 @@ function deleteEmployee(employeeId) {
         </tr>
       </thead>
       <tbody>
-        <tr v-if="employees.length === 0" class="empty-row">
+        <tr v-if="filteredAndSortedEmployees.length === 0" class="empty-row">
           <td colspan="8">
             <div class="empty-message">
-              Chưa có dữ liệu nhân viên. Vui lòng thêm nhân viên hoặc đợi dữ liệu được tải.
+              Chưa có dữ liệu nhân viên. Vui lòng thêm nhân viên hoặc đợi dữ liệu
+              được tải.
             </div>
           </td>
         </tr>
-        <template v-for="employee in employees" :key="employee.employeeId">
-          <tr v-if="editingEmployee !== employee.employeeId" class="data-row">
+        <template
+          v-for="employee in filteredAndSortedEmployees"
+          :key="employee.employeeId"
+        >
+          <tr
+            v-if="editingEmployee !== employee.employeeId"
+            class="data-row"
+          >
             <td class="code-cell">{{ employee.employeeId }}</td>
             <td class="name-cell">{{ employee.name }}</td>
             <td class="date-cell">{{ formatDate(employee.birthDate) }}</td>
             <td class="id-cell">{{ employee.citizenId }}</td>
-            <td class="money-cell">{{ employee.salaryPerHour.toLocaleString("vi-VN") }} đ</td>
+            <td class="money-cell">
+              {{ employee.salaryPerHour.toLocaleString("vi-VN") }} đ
+            </td>
             <td class="number-cell">{{ employee.monthlyHours }}</td>
-            <td class="money-cell total">{{ employee.totalSalary.toLocaleString("vi-VN") }} đ</td>
+            <td class="money-cell total">
+              {{ employee.totalSalary.toLocaleString("vi-VN") }} đ
+            </td>
             <td class="action-cell">
-              <button @click="startEdit(employee)" class="btn-edit">Sửa</button>
-              <button @click="deleteEmployee(employee.employeeId)" class="btn-delete">Xóa</button>
+              <Button @click="startEdit(employee)" variant="edit" size="small">
+                Sửa
+              </Button>
+              <Button
+                @click="deleteEmployee(employee.employeeId)"
+                variant="delete"
+                size="small"
+              >
+                Xóa
+              </Button>
             </td>
           </tr>
           <tr v-else class="edit-row">
             <td class="code-cell">{{ employee.employeeId }}</td>
             <td>
-              <BaseInput v-model="editForm.name" label="" placeholder="Tên nhân viên" />
+              <BaseInput
+                v-model="editForm.name"
+                label=""
+                placeholder="Tên nhân viên"
+              />
             </td>
             <td>
               <DateInput v-model="editForm.birthDate" label="" />
             </td>
             <td>
-              <BaseInput v-model="editForm.citizenId" label="" placeholder="Số CCCD" />
+              <BaseInput
+                v-model="editForm.citizenId"
+                label=""
+                placeholder="Số CCCD"
+              />
             </td>
             <td>
-              <NumberInput v-model="editForm.salaryPerHour" label="" placeholder="Lương/giờ" />
+              <NumberInput
+                v-model="editForm.salaryPerHour"
+                label=""
+                placeholder="Lương/giờ"
+              />
             </td>
             <td>
-              <NumberInput v-model="editForm.monthlyHours" label="" placeholder="Giờ làm/tháng" />
+              <NumberInput
+                v-model="editForm.monthlyHours"
+                label=""
+                placeholder="Giờ làm/tháng"
+              />
             </td>
             <td class="money-cell total">
-              {{ (Number(editForm.salaryPerHour) * Number(editForm.monthlyHours)).toLocaleString("vi-VN") }} đ
+              {{
+                (
+                  Number(editForm.salaryPerHour) *
+                  Number(editForm.monthlyHours)
+                ).toLocaleString("vi-VN")
+              }}
+              đ
             </td>
             <td class="action-cell">
-              <button @click="saveEdit(employee.employeeId)" class="btn-save">Lưu</button>
-              <button @click="cancelEdit" class="btn-cancel">Hủy</button>
+              <Button @click="saveEdit(employee.employeeId)" variant="save" size="small">
+                Lưu
+              </Button>
+              <Button @click="cancelEdit" variant="cancel" size="small">
+                Hủy
+              </Button>
             </td>
           </tr>
         </template>
@@ -126,25 +254,66 @@ function deleteEmployee(employeeId) {
   </div>
 </template>
 
-<script>
-  export default {
-  methods: {
-    formatDate(dateString) {
-      if (!dateString) return "";
-      const date = new Date(dateString);
-      return date.toLocaleDateString("vi-VN");
-    },
-  },
-};
-
-</script>
-
 <style scoped>
 .table-container {
   overflow-x: auto;
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.filter-controls {
+  padding: 20px;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: flex-end;
+}
+
+.filter-controls .filter-group :deep(.input-wrapper),
+.filter-controls .sort-group :deep(.input-wrapper) {
+  margin-bottom: 0;
+}
+
+.filter-group,
+.sort-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 200px;
+}
+
+.filter-group label,
+.sort-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.sort-select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+  transition: border-color 0.3s;
+  box-sizing: border-box;
+  height: 42px;
+}
+
+.sort-select:focus {
+  outline: none;
+  border-color: #42b883;
+}
+
+.reset-btn {
+  width: auto;
+  padding-inline: 16px;
+  margin-left: auto;
 }
 
 .data-table {
@@ -238,53 +407,8 @@ function deleteEmployee(employeeId) {
   white-space: nowrap;
 }
 
-.btn-edit,
-.btn-delete,
-.btn-save,
-.btn-cancel {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 4px;
-  font-size: 12px;
-  cursor: pointer;
+.action-cell .btn {
   margin-right: 6px;
-  transition: all 0.2s;
-}
-
-.btn-edit {
-  background: #42b883;
-  color: white;
-}
-
-.btn-edit:hover {
-  background: #35a372;
-}
-
-.btn-delete {
-  background: #ef4444;
-  color: white;
-}
-
-.btn-delete:hover {
-  background: #dc2626;
-}
-
-.btn-save {
-  background: #3b82f6;
-  color: white;
-}
-
-.btn-save:hover {
-  background: #2563eb;
-}
-
-.btn-cancel {
-  background: #6b7280;
-  color: white;
-}
-
-.btn-cancel:hover {
-  background: #4b5563;
 }
 
 .edit-row td {
@@ -298,6 +422,10 @@ function deleteEmployee(employeeId) {
 @media (max-width: 768px) {
   .table-container {
     border-radius: 4px;
+  }
+
+  .filter-controls {
+    flex-direction: column;
   }
 
   .data-table {

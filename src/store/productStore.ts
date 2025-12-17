@@ -1,21 +1,30 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
-export const useProductStore = defineStore("productStore", () => {
-  const products = ref([]);
+export interface Product {
+  id: string;
+  name: string;
+  quantity: number;
+  unit: string;
+  price: number;
+  importDate: string;
+}
 
-  function addProduct(product) {
+export const useProductStore = defineStore("productStore", () => {
+  const products = ref<Product[]>([]);
+
+  function addProduct(product: Product): void {
     products.value.push(product);
   }
 
-  function deleteProduct(productId) {
+  function deleteProduct(productId: string): void {
     const index = products.value.findIndex((p) => p.id === productId);
     if (index > -1) {
       products.value.splice(index, 1);
     }
   }
 
-  function updateProduct(productId, updatedProduct) {
+  function updateProduct(productId: string, updatedProduct: Partial<Product>): void {
     const index = products.value.findIndex((p) => p.id === productId);
     if (index > -1) {
       products.value[index] = { ...products.value[index], ...updatedProduct };
@@ -24,3 +33,4 @@ export const useProductStore = defineStore("productStore", () => {
 
   return { products, addProduct, deleteProduct, updateProduct };
 });
+

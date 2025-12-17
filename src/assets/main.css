@@ -16,3 +16,29 @@ a,
   }
 }
 
+/* Common form style */
+.form {
+  margin-bottom: 20px;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.form h3 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Common submit button margin - used with Button component */
+.submit-button {
+  margin-top: 10px;
+}
+
+/* Reset button layout - used with Button component */
+.reset-btn {
+  width: auto;
+  padding-inline: 16px;
+  margin-left: auto;
+}
+

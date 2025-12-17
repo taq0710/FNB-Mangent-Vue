@@ -1,21 +1,31 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
-export const useEmployeeStore = defineStore("employeeStore", () => {
-  const employees = ref([]);
+export interface Employee {
+  employeeId: string;
+  name: string;
+  birthDate: string;
+  citizenId: string;
+  salaryPerHour: number;
+  monthlyHours: number;
+  totalSalary: number;
+}
 
-  function addEmployee(emp) {
+export const useEmployeeStore = defineStore("employeeStore", () => {
+  const employees = ref<Employee[]>([]);
+
+  function addEmployee(emp: Employee): void {
     employees.value.push(emp);
   }
 
-  function deleteEmployee(employeeId) {
+  function deleteEmployee(employeeId: string): void {
     const index = employees.value.findIndex((e) => e.employeeId === employeeId);
     if (index > -1) {
       employees.value.splice(index, 1);
     }
   }
 
-  function updateEmployee(employeeId, updatedEmployee) {
+  function updateEmployee(employeeId: string, updatedEmployee: Partial<Employee>): void {
     const index = employees.value.findIndex((e) => e.employeeId === employeeId);
     if (index > -1) {
       employees.value[index] = {
@@ -33,3 +43,4 @@ export const useEmployeeStore = defineStore("employeeStore", () => {
 
   return { employees, addEmployee, deleteEmployee, updateEmployee };
 });
+

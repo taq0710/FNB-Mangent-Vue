@@ -1,4 +1,4 @@
-export async function loadInitialData() {
+export async function loadInitialData(): Promise<any> {
   try {
     const response = await fetch("/data.json");
     if (!response.ok) {
