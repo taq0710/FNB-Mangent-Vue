@@ -5,21 +5,24 @@
       "username": "admin",
       "password": "admin123",
       "token": "fake-token-admin-12345",
-      "name": "Quản trị viên"
+      "name": "Quản trị viên",
+      "role": "admin"
     },
     {
       "id": 2,
       "username": "user1",
       "password": "user123",
       "token": "fake-token-user-67890",
-      "name": "Người dùng 1"
+      "name": "Người dùng 1",
+      "role": "user"
     },
     {
       "id": 3,
       "username": "test",
       "password": "test123",
       "token": "fake-token-test-abcde",
-      "name": "Người dùng test"
+      "name": "Người dùng test",
+      "role": "user"
     }
   ],
   "products": [

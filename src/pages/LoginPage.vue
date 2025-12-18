@@ -1,3 +1,38 @@
+<script setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { login } from '../services/authService';
+import Button from '../components/common/Button.vue';
+
+const router = useRouter();
+const username = ref('');
+const password = ref('');
+const errorMessage = ref('');
+const loading = ref(false);
+
+const handleLogin = async () => {
+  errorMessage.value = '';
+  loading.value = true;
+
+  try {
+    const result = await login(username.value, password.value);
+
+    if (result.success) {
+      // Đăng nhập thành công, chuyển đến dashboard
+      router.push('/');
+    } else {
+      // Đăng nhập thất bại
+      errorMessage.value = result.message || 'Đăng nhập thất bại';
+    }
+  } catch (error) {
+    errorMessage.value = 'Có lỗi xảy ra, vui lòng thử lại';
+    console.error('Login error:', error);
+  } finally {
+    loading.value = false;
+  }
+};
+</script>
+
 <template>
   <div class="login-container">
     <div class="login-box">
@@ -29,9 +64,9 @@
           {{ errorMessage }}
         </div>
 
-        <button type="submit" :disabled="loading" class="login-button">
+        <Button type="submit" :disabled="loading" full-width>
           {{ loading ? 'Đang đăng nhập...' : 'Đăng nhập' }}
-        </button>
+        </Button>
       </form>
 
       <div class="demo-accounts">
@@ -45,40 +80,6 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { login } from '../services/authService';
-
-const router = useRouter();
-const username = ref('');
-const password = ref('');
-const errorMessage = ref('');
-const loading = ref(false);
-
-const handleLogin = async () => {
-  errorMessage.value = '';
-  loading.value = true;
-
-  try {
-    const result = await login(username.value, password.value);
-
-    if (result.success) {
-      // Đăng nhập thành công, chuyển đến dashboard
-      router.push('/');
-    } else {
-      // Đăng nhập thất bại
-      errorMessage.value = result.message || 'Đăng nhập thất bại';
-    }
-  } catch (error) {
-    errorMessage.value = 'Có lỗi xảy ra, vui lòng thử lại';
-    console.error('Login error:', error);
-  } finally {
-    loading.value = false;
-  }
-};
-</script>
 
 <style scoped>
 .login-container {
@@ -138,28 +139,6 @@ const handleLogin = async () => {
   border-radius: 6px;
   margin-bottom: 15px;
   font-size: 14px;
-}
-
-.login-button {
-  width: 100%;
-  padding: 12px;
-  background: #667eea;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.login-button:hover:not(:disabled) {
-  background: #5568d3;
-}
-
-.login-button:disabled {
-  background: #ccc;
-  cursor: not-allowed;
 }
 
 .demo-accounts {

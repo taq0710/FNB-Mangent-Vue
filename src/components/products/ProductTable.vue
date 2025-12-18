@@ -1,15 +1,30 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useProductStore } from "../../store/productStore";
 import BaseInput from "../common/BaseInput.vue";
 import NumberInput from "../common/NumberInput.vue";
 import DateInput from "../common/DateInput.vue";
 import Button from "../common/Button.vue";
+import Modal from "../common/Modal.vue";
 import type { Product } from "../../store/productStore";
+import { isAdmin } from "../../services/authService";
 
 const productStore = useProductStore();
 const { products } = storeToRefs(productStore);
+
+const isUserAdmin = ref(false);
+const showDetailModal = ref(false);
+const selectedProduct = ref<Product | null>(null);
+
+onMounted(async () => {
+  isUserAdmin.value = await isAdmin();
+});
+
+function showDetails(product: Product) {
+  selectedProduct.value = product;
+  showDetailModal.value = true;
+}
 
 const editingProduct = ref<string | null>(null);
 const editForm = ref({
@@ -179,12 +194,17 @@ function resetFilters() {
             <td class="price-cell">{{ formatPrice(product.price) }}</td>
             <td class="date-cell">{{ formatDate(product.importDate) }}</td>
             <td class="action-cell">
-              <Button @click="startEdit(product)" variant="edit" size="small">
-                Sửa
+              <Button @click="showDetails(product)" variant="primary" size="small">
+                Chi tiết
               </Button>
-              <Button @click="deleteProduct(product.id)" variant="delete" size="small">
-                Xóa
-              </Button>
+              <template v-if="isUserAdmin">
+                <Button @click="startEdit(product)" variant="edit" size="small">
+                  Sửa
+                </Button>
+                <Button @click="deleteProduct(product.id)" variant="delete" size="small">
+                  Xóa
+                </Button>
+              </template>
             </td>
           </tr>
           <tr v-else class="edit-row">
@@ -232,10 +252,73 @@ function resetFilters() {
         </template>
       </tbody>
     </table>
+
+    <!-- Detail Modal -->
+    <Modal
+      :show="showDetailModal"
+      title="Chi tiết sản phẩm"
+      @close="showDetailModal = false"
+    >
+      <div v-if="selectedProduct" class="detail-content">
+        <div class="detail-item">
+          <label>Mã sản phẩm:</label>
+          <span>{{ selectedProduct.id }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Tên sản phẩm:</label>
+          <span>{{ selectedProduct.name }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Số lượng:</label>
+          <span>{{ selectedProduct.quantity }} {{ selectedProduct.unit }}</span>
+        </div>
+        <div class="detail-item highlight">
+          <label>Đơn giá:</label>
+          <span>{{ formatPrice(selectedProduct.price) }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Ngày nhập:</label>
+          <span>{{ formatDate(selectedProduct.importDate) }}</span>
+        </div>
+      </div>
+    </Modal>
   </div>
 </template>
 
 <style scoped>
+.detail-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.detail-item label {
+  font-weight: 600;
+  color: #666;
+}
+
+.detail-item span {
+  color: #333;
+}
+
+.detail-item.highlight {
+  margin-top: 8px;
+  border-bottom: none;
+  font-size: 1.1em;
+}
+
+.detail-item.highlight span {
+  color: #dc2626;
+  font-weight: 700;
+}
+
 .table-container {
   overflow-x: auto;
   background: white;

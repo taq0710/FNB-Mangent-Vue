@@ -1,18 +1,3 @@
-<template>
-    <div class="chart-container">
-        <h3>Sản phẩm bán ra</h3>
-        <div class="chart-controls">
-            <button v-for="period in periods" :key="period" @click="selectedPeriod = period"
-                :class="{ active: selectedPeriod === period }">
-                {{ periodLabels[period] }}
-            </button>
-        </div>
-        <div class="chart-wrapper">
-            <Bar :data="chartData" :options="chartOptions" />
-        </div>
-    </div>
-</template>
-
 <script setup>
 import { computed, ref } from "vue";
 import { Bar } from "vue-chartjs";
@@ -26,6 +11,7 @@ import {
     Legend,
 } from "chart.js";
 import { useChartStore } from "../../store/chartStore";
+import Button from "../common/Button.vue";
 
 ChartJS.register(
     CategoryScale,
@@ -128,6 +114,26 @@ const chartOptions = {
 };
 </script>
 
+<template>
+    <div class="chart-container">
+        <h3>Sản phẩm bán ra</h3>
+        <div class="chart-controls">
+            <Button
+                v-for="period in periods"
+                :key="period"
+                @click="selectedPeriod = period"
+                :variant="selectedPeriod === period ? 'primary' : 'secondary'"
+                size="small"
+            >
+                {{ periodLabels[period] }}
+            </Button>
+        </div>
+        <div class="chart-wrapper">
+            <Bar :data="chartData" :options="chartOptions" />
+        </div>
+    </div>
+</template>
+
 <style scoped>
 .chart-container {
     background: white;
@@ -141,25 +147,6 @@ const chartOptions = {
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
-}
-
-.chart-controls button {
-    padding: 8px 16px;
-    border: 1px solid #ddd;
-    background: white;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.chart-controls button:hover {
-    background: #f0f0f0;
-}
-
-.chart-controls button.active {
-    background: #42b883;
-    color: white;
-    border-color: #42b883;
 }
 
 .chart-wrapper {

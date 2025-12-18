@@ -1,15 +1,30 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useEmployeeStore } from "../../store/employeeStore";
 import BaseInput from "../common/BaseInput.vue";
 import NumberInput from "../common/NumberInput.vue";
 import DateInput from "../common/DateInput.vue";
 import Button from "../common/Button.vue";
+import Modal from "../common/Modal.vue";
 import type { Employee } from "../../store/employeeStore";
+import { isAdmin } from "../../services/authService";
 
 const employeeStore = useEmployeeStore();
 const { employees } = storeToRefs(employeeStore);
+
+const isUserAdmin = ref(false);
+const showDetailModal = ref(false);
+const selectedEmployee = ref<Employee | null>(null);
+
+onMounted(async () => {
+  isUserAdmin.value = await isAdmin();
+});
+
+function showDetails(employee: Employee) {
+  selectedEmployee.value = employee;
+  showDetailModal.value = true;
+}
 
 const editingEmployee = ref<string | null>(null);
 const editForm = ref({
@@ -185,16 +200,21 @@ function resetFilters() {
               {{ employee.totalSalary.toLocaleString("vi-VN") }} đ
             </td>
             <td class="action-cell">
-              <Button @click="startEdit(employee)" variant="edit" size="small">
-                Sửa
+              <Button @click="showDetails(employee)" variant="primary" size="small">
+                Chi tiết
               </Button>
-              <Button
-                @click="deleteEmployee(employee.employeeId)"
-                variant="delete"
-                size="small"
-              >
-                Xóa
-              </Button>
+              <template v-if="isUserAdmin">
+                <Button @click="startEdit(employee)" variant="edit" size="small">
+                  Sửa
+                </Button>
+                <Button
+                  @click="deleteEmployee(employee.employeeId)"
+                  variant="delete"
+                  size="small"
+                >
+                  Xóa
+                </Button>
+              </template>
             </td>
           </tr>
           <tr v-else class="edit-row">
@@ -251,10 +271,81 @@ function resetFilters() {
         </template>
       </tbody>
     </table>
+
+    <!-- Detail Modal -->
+    <Modal
+      :show="showDetailModal"
+      title="Chi tiết nhân viên"
+      @close="showDetailModal = false"
+    >
+      <div v-if="selectedEmployee" class="detail-content">
+        <div class="detail-item">
+          <label>Mã nhân viên:</label>
+          <span>{{ selectedEmployee.employeeId }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Họ tên:</label>
+          <span>{{ selectedEmployee.name }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Ngày sinh:</label>
+          <span>{{ formatDate(selectedEmployee.birthDate) }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Số CCCD:</label>
+          <span>{{ selectedEmployee.citizenId }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Lương mỗi giờ:</label>
+          <span>{{ selectedEmployee.salaryPerHour.toLocaleString("vi-VN") }} đ</span>
+        </div>
+        <div class="detail-item">
+          <label>Số giờ làm tháng:</label>
+          <span>{{ selectedEmployee.monthlyHours }} giờ</span>
+        </div>
+        <div class="detail-item highlight">
+          <label>Tổng lương:</label>
+          <span>{{ selectedEmployee.totalSalary.toLocaleString("vi-VN") }} đ</span>
+        </div>
+      </div>
+    </Modal>
   </div>
 </template>
 
 <style scoped>
+.detail-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.detail-item label {
+  font-weight: 600;
+  color: #666;
+}
+
+.detail-item span {
+  color: #333;
+}
+
+.detail-item.highlight {
+  margin-top: 8px;
+  border-bottom: none;
+  font-size: 1.1em;
+}
+
+.detail-item.highlight span {
+  color: #dc2626;
+  font-weight: 700;
+}
+
 .table-container {
   overflow-x: auto;
   background: white;

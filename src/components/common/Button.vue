@@ -1,7 +1,7 @@
 <script setup lang="ts">
 interface Props {
-  variant?: 'primary' | 'edit' | 'delete' | 'save' | 'cancel' | 'secondary';
-  size?: 'small' | 'medium' | 'large';
+  variant?: 'primary' | 'edit' | 'delete' | 'save' | 'cancel' | 'secondary' | 'ghost';
+  size?: 'small' | 'medium' | 'large' | 'none';
   disabled?: boolean;
   type?: 'button' | 'submit' | 'reset';
   fullWidth?: boolean;
@@ -49,6 +49,11 @@ defineEmits<{
 }
 
 /* Sizes */
+.btn-none {
+  padding: 0;
+  font-size: inherit;
+}
+
 .btn-small {
   padding: 6px 12px;
   font-size: 12px;
@@ -125,6 +130,15 @@ defineEmits<{
 
 .btn-secondary:hover:not(:disabled) {
   background: #4b5563;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: inherit;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.05);
 }
 
 /* Full width */

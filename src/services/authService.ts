@@ -6,6 +6,7 @@ interface User {
   password: string;
   token: string;
   name: string;
+  role: string;
 }
 
 interface UserData {
@@ -13,6 +14,7 @@ interface UserData {
   username: string;
   name: string;
   token: string;
+  role: string;
 }
 
 interface LoginResult {
@@ -59,6 +61,7 @@ export async function login(
         username: user.username,
         name: user.name,
         token: user.token,
+        role: user.role,
       },
     };
   }
@@ -69,9 +72,14 @@ export async function login(
   };
 }
 
-/**
- * Kiểm tra token có hợp lệ không
- */
+//  Kiểm tra xem người dùng hiện tại có phải là admin không
+export async function isAdmin(): Promise<boolean> {
+  const user = await getCurrentUser();
+  return user?.role === "admin";
+}
+
+//Kiểm tra token có hợp lệ không
+
 export async function validateToken(token: string | null): Promise<boolean> {
   if (!token) return false;
 
@@ -106,6 +114,7 @@ export async function getCurrentUser(): Promise<UserData | null> {
       username: user.username,
       name: user.name,
       token: user.token,
+      role: user.role,
     };
   }
 
