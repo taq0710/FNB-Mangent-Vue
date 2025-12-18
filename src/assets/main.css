@@ -1,6 +1,22 @@
 @import './base.css';
 
-
+:root {
+  --primary-color: #42b883;
+  --primary-dark: #35a372;
+  --secondary-color: #6b7280;
+  --danger-color: #ef4444;
+  --danger-dark: #dc2626;
+  --info-color: #3b82f6;
+  --info-dark: #2563eb;
+  --warning-color: #f59e0b;
+  --text-main: #374151;
+  --text-muted: #6b7280;
+  --bg-card: #ffffff;
+  --bg-table-header: linear-gradient(135deg, #42b883 0%, #35a372 100%);
+  --border-color: #e5e7eb;
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
 
 a,
 .green {

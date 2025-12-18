@@ -13,7 +13,7 @@ const productStore = useProductStore();
 const employeeStore = useEmployeeStore();
 
 const totalRevenue = computed(() => {
-  const yearData = chartStore?.revenue?.value?.year;
+  const yearData = chartStore.revenue?.year;
   if (yearData && yearData.length > 0) {
     return yearData[yearData.length - 1].amount;
   }
@@ -21,7 +21,7 @@ const totalRevenue = computed(() => {
 });
 
 const totalProductsSold = computed(() => {
-  const yearData = chartStore?.productsSold?.value?.year;
+  const yearData = chartStore.productsSold?.year;
   if (yearData && yearData.length > 0) {
     return yearData[yearData.length - 1].quantity;
   }
@@ -29,27 +29,26 @@ const totalProductsSold = computed(() => {
 });
 
 const totalEmployees = computed(() => {
-  return employeeStore?.employees?.value?.length;
+  return employeeStore.employees?.length || 0;
 });
 
 onMounted(async () => {
   const data = await loadInitialData();
   if (data) {
     if (data.products) {
-      productStore.products.value = data.products;
-      console.log(productStore.products.value)
+      productStore.products = data.products;
     }
 
     if (data.employees) {
-      employeeStore.employees.value = data.employees;
+      employeeStore.employees = data.employees;
     }
 
     if (data.revenue) {
-      chartStore.revenue.value = data.revenue;
+      chartStore.revenue = data.revenue;
     }
 
     if (data.productsSold) {
-      chartStore.productsSold.value = data.productsSold;
+      chartStore.productsSold = data.productsSold;
     }
   }
 });

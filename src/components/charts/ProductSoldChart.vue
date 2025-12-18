@@ -34,7 +34,7 @@ const periodLabels = {
 };
 
 const chartData = computed(() => {
-    const data = store.productsSold.value?.[selectedPeriod.value] || [];
+    const data = store.productsSold?.[selectedPeriod.value] || [];
 
     if (selectedPeriod.value === "day") {
         return {

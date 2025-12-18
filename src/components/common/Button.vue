@@ -71,49 +71,49 @@ defineEmits<{
 
 /* Variants */
 .btn-primary {
-  background: #42b883;
+  background: var(--primary-color);
   color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: #35a372;
+  background: var(--primary-dark);
 }
 
 .btn-edit {
-  background: #42b883;
+  background: var(--primary-color);
   color: white;
   padding: 6px 12px;
   font-size: 12px;
 }
 
 .btn-edit:hover:not(:disabled) {
-  background: #35a372;
+  background: var(--primary-dark);
 }
 
 .btn-delete {
-  background: #ef4444;
+  background: var(--danger-color);
   color: white;
   padding: 6px 12px;
   font-size: 12px;
 }
 
 .btn-delete:hover:not(:disabled) {
-  background: #dc2626;
+  background: var(--danger-dark);
 }
 
 .btn-save {
-  background: #3b82f6;
+  background: var(--info-color);
   color: white;
   padding: 6px 12px;
   font-size: 12px;
 }
 
 .btn-save:hover:not(:disabled) {
-  background: #2563eb;
+  background: var(--info-dark);
 }
 
 .btn-cancel {
-  background: #6b7280;
+  background: var(--secondary-color);
   color: white;
   padding: 6px 12px;
   font-size: 12px;
@@ -124,7 +124,7 @@ defineEmits<{
 }
 
 .btn-secondary {
-  background: #6b7280;
+  background: var(--secondary-color);
   color: white;
 }
 

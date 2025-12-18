@@ -35,7 +35,7 @@ const periodLabels = {
 };
 
 const chartData = computed(() => {
-  const data = store.revenue.value?.[selectedPeriod.value] || [];
+  const data = store.revenue?.[selectedPeriod.value] || [];
 
   if (selectedPeriod.value === "week") {
     return {

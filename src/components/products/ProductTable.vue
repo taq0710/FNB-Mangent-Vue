@@ -301,11 +301,11 @@ function resetFilters() {
 
 .detail-item label {
   font-weight: 600;
-  color: #666;
+  color: var(--text-muted);
 }
 
 .detail-item span {
-  color: #333;
+  color: var(--text-main);
 }
 
 .detail-item.highlight {
@@ -315,21 +315,21 @@ function resetFilters() {
 }
 
 .detail-item.highlight span {
-  color: #dc2626;
+  color: var(--danger-dark);
   font-weight: 700;
 }
 
 .table-container {
   overflow-x: auto;
-  background: white;
+  background: var(--bg-card);
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 .filter-controls {
   padding: 20px;
   background: #f9fafb;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border-color);
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
@@ -370,7 +370,7 @@ function resetFilters() {
 
 .sort-select:focus {
   outline: none;
-  border-color: #42b883;
+  border-color: var(--primary-color);
 }
 
 .reset-btn {
@@ -386,7 +386,7 @@ function resetFilters() {
 }
 
 .data-table thead {
-  background: linear-gradient(135deg, #42b883 0%, #35a372 100%);
+  background: var(--bg-table-header);
   color: white;
 }
 
@@ -400,7 +400,7 @@ function resetFilters() {
 }
 
 .data-table tbody tr {
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border-color);
   transition: background-color 0.2s;
 }
 
@@ -414,7 +414,7 @@ function resetFilters() {
 
 .data-table td {
   padding: 14px 16px;
-  color: #374151;
+  color: var(--text-main);
 }
 
 .empty-row td {
@@ -428,30 +428,31 @@ function resetFilters() {
 }
 
 .code-cell {
+  text-align: left;
   font-weight: 600;
-  color: #42b883;
-  font-family: "Courier New", monospace;
+  color: var(--primary-color);
 }
 
 .name-cell {
-  font-weight: 500;
+  text-align: left;
+  font-weight: 600;
   color: #1f2937;
 }
 
 .number-cell {
-  text-align: right;
+  text-align: left;
   font-weight: 600;
   color: #059669;
 }
 
 .price-cell {
-  text-align: right;
+  text-align: left;
   font-weight: 600;
-  color: #dc2626;
+  color: var(--danger-dark);
 }
 
 .date-cell {
-  color: #6b7280;
+  color: var(--text-muted);
   font-size: 13px;
 }
 
