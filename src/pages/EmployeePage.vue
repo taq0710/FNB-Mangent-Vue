@@ -24,24 +24,12 @@ onMounted(async () => {
 <template>
   <DefaultLayout>
     <div>
-      <h1 class="title">Quản lý nhân viên</h1>
+      <h1 class="text-2xl font-bold mb-5">Quản lý nhân viên</h1>
 
-      <div class="wrapper">
+      <div class="mt-5">
         <EmployeeForm v-if="isUserAdmin" />
         <EmployeeTable />
       </div>
     </div>
   </DefaultLayout>
 </template>
-
-<style scoped>
-.title {
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 20px;
-}
-
-.wrapper {
-  margin-top: 20px;
-}
-</style>

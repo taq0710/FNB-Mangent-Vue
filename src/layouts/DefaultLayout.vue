@@ -1,8 +1,8 @@
 <template>
-  <div class="layout">
+  <div class="flex h-screen">
     <Sidebar />
 
-    <main class="content">
+    <main class="flex-1 p-5 overflow-auto [&::-webkit-scrollbar]:hidden">
       <slot />
     </main>
   </div>
@@ -11,19 +11,3 @@
 <script setup>
 import Sidebar from './Sidebar.vue';
 </script>
-
-<style scoped>
-.layout {
-  display: flex;
-  height: 100vh;
-}
-
-.content {
-  flex: 1;
-  padding: 20px;
-  overflow: auto;
-}
-.content::-webkit-scrollbar {
-  display: none;
-}
-</style>

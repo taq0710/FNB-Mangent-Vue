@@ -12,53 +12,25 @@ defineProps({
     type: String,
     default: "",
   },
+  class:{
+    type: String,
+    default: "",
+  }
 });
 
 defineEmits(["update:modelValue"]);
 </script>
 
 <template>
-  <div class="input-wrapper">
-    <label v-if="label" class="input-label">{{ label }}</label>
+  <div :class="class">
+    <label v-if="label" class="block mb-1 text-sm font-medium text-gray-800">{{ label }}</label>
     <input
       type="date"
       :value="modelValue"
       :placeholder="placeholder"
       @input="$emit('update:modelValue', $event.target.value)"
-      class="base-input"
+      class="w-full p-2.5 border border-gray-300 rounded text-sm transition-colors focus:outline-none focus:border-primary placeholder:text-gray-400"
     />
   </div>
 </template>
-
-<style scoped>
-.input-wrapper {
-  margin-bottom: 12px;
-}
-
-.input-label {
-  display: block;
-  margin-bottom: 4px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #333;
-}
-
-.base-input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-  transition: border-color 0.3s;
-}
-
-.base-input:focus {
-  outline: none;
-  border-color: #42b883;
-}
-
-.base-input::placeholder {
-  color: #999;
-}
-</style>
 

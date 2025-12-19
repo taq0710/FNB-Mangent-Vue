@@ -52,7 +52,6 @@ export async function login(
   );
 
   if (user) {
-    // Lưu token vào localStorage
     localStorage.setItem(TOKEN_KEY, user.token);
     return {
       success: true,
@@ -72,13 +71,10 @@ export async function login(
   };
 }
 
-//  Kiểm tra xem người dùng hiện tại có phải là admin không
 export async function isAdmin(): Promise<boolean> {
   const user = await getCurrentUser();
   return user?.role === "admin";
 }
-
-//Kiểm tra token có hợp lệ không
 
 export async function validateToken(token: string | null): Promise<boolean> {
   if (!token) return false;

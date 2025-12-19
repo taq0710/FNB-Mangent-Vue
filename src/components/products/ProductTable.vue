@@ -35,7 +35,6 @@ const editForm = ref({
   importDate: "",
 });
 
-// Filter và Sort
 const priceFilter = ref("");
 const dateSort = ref<"none" | "oldest" | "newest">("none");
 const priceSort = ref<"none" | "low" | "high">("none");
@@ -43,13 +42,11 @@ const priceSort = ref<"none" | "low" | "high">("none");
 const filteredAndSortedProducts = computed(() => {
   let result = [...products.value];
 
-  // Filter theo giá
   if (priceFilter.value) {
     const filterValue = Number(priceFilter.value);
     result = result.filter((p) => p.price <= filterValue);
   }
 
-  // Sort theo ngày
   if (dateSort.value !== "none") {
     result.sort((a, b) => {
       const dateA = new Date(a.importDate).getTime();
@@ -58,7 +55,6 @@ const filteredAndSortedProducts = computed(() => {
     });
   }
 
-  // Sort theo giá
   if (priceSort.value !== "none") {
     result.sort((a, b) => {
       return priceSort.value === "low" ? a.price - b.price : b.price - a.price;
@@ -128,11 +124,10 @@ function resetFilters() {
 </script>
 
 <template>
-  <div class="table-container">
-    <!-- Filter và Sort Controls -->
-    <div class="filter-controls">
-      <div class="filter-group">
-        <label>Lọc theo giá tối đa:</label>
+  <div class="overflow-x-auto bg-white rounded shadow-sm md:rounded-lg">
+    <div class="p-5 bg-gray-50 border-b border-gray-200 flex flex-col gap-5 items-end md:flex-row md:flex-wrap">
+      <div class="flex flex-col gap-2 min-w-[200px]">
+        <label class="text-xs font-semibold text-gray-700">Lọc theo giá tối đa:</label>
         <NumberInput
           v-model="priceFilter"
           placeholder="Nhập giá tối đa"
@@ -140,18 +135,24 @@ function resetFilters() {
         />
       </div>
 
-      <div class="sort-group">
-        <label>Sắp xếp theo ngày:</label>
-        <select v-model="dateSort" class="sort-select">
+      <div class="flex flex-col gap-2 min-w-[200px]">
+        <label class="text-xs font-semibold text-gray-700">Sắp xếp theo ngày:</label>
+        <select 
+          v-model="dateSort" 
+          class="w-full p-2.5 border border-gray-300 rounded text-sm bg-white cursor-pointer transition-colors box-border focus:outline-none focus:border-primary"
+        >
           <option value="none">Không sắp xếp</option>
           <option value="oldest">Cũ nhất → Mới nhất</option>
           <option value="newest">Mới nhất → Cũ nhất</option>
         </select>
       </div>
 
-      <div class="sort-group">
-        <label>Sắp xếp theo giá:</label>
-        <select v-model="priceSort" class="sort-select">
+      <div class="flex flex-col gap-2 min-w-[200px]">
+        <label class="text-xs font-semibold text-gray-700">Sắp xếp theo giá:</label>
+        <select 
+          v-model="priceSort" 
+          class="w-full p-2.5 border border-gray-300 rounded text-sm bg-white cursor-pointer transition-colors box-border focus:outline-none focus:border-primary"
+        >
           <option value="none">Không sắp xếp</option>
           <option value="low">Thấp → Cao</option>
           <option value="high">Cao → Thấp</option>
@@ -163,88 +164,103 @@ function resetFilters() {
       </Button>
     </div>
 
-    <table class="data-table">
-      <thead>
+    <table class="w-full border-collapse text-xs md:text-sm">
+      <thead class="bg-gradient-to-r from-primary to-primary-dark text-white">
         <tr>
-          <th>Mã</th>
-          <th>Tên</th>
-          <th>Số lượng</th>
-          <th>Đơn vị</th>
-          <th>Giá</th>
-          <th>Ngày nhập</th>
-          <th>Thao tác</th>
+          <th class="py-2.5 px-2 text-left font-semibold uppercase text-xs tracking-wider md:p-4">Mã</th>
+          <th class="py-2.5 px-2 text-left font-semibold uppercase text-xs tracking-wider md:p-4">Tên</th>
+          <th class="py-2.5 px-2 text-left font-semibold uppercase text-xs tracking-wider md:p-4">Số lượng</th>
+          <th class="py-2.5 px-2 text-left font-semibold uppercase text-xs tracking-wider md:p-4">Đơn vị</th>
+          <th class="py-2.5 px-2 text-left font-semibold uppercase text-xs tracking-wider md:p-4">Giá</th>
+          <th class="py-2.5 px-2 text-left font-semibold uppercase text-xs tracking-wider md:p-4">Ngày nhập</th>
+          <th class="py-2.5 px-2 text-left font-semibold uppercase text-xs tracking-wider md:p-4">Thao tác</th>
         </tr>
       </thead>
 
       <tbody>
-        <tr v-if="!filteredAndSortedProducts || filteredAndSortedProducts.length === 0" class="empty-row">
-          <td colspan="7">
-            <div class="empty-message">
+        <tr v-if="!filteredAndSortedProducts || filteredAndSortedProducts.length === 0">
+          <td colspan="7" class="p-10 text-center">
+            <div class="text-gray-400 italic">
               Chưa có dữ liệu sản phẩm. Vui lòng thêm sản phẩm hoặc đợi dữ liệu
               được tải.
             </div>
           </td>
         </tr>
         <template v-for="product in filteredAndSortedProducts" :key="product.id">
-          <tr v-if="editingProduct !== product.id" class="data-row">
-            <td class="code-cell">{{ product.id }}</td>
-            <td class="name-cell">{{ product.name }}</td>
-            <td class="number-cell">{{ product.quantity }}</td>
-            <td>{{ product.unit }}</td>
-            <td class="price-cell">{{ formatPrice(product.price) }}</td>
-            <td class="date-cell">{{ formatDate(product.importDate) }}</td>
-            <td class="action-cell">
-              <Button @click="showDetails(product)" variant="primary" size="small">
+          <tr 
+            v-if="editingProduct !== product.id" 
+            class="border-b border-gray-200 transition-colors hover:bg-gray-50 last:border-b-0"
+          >
+            <td class="py-2.5 px-2 text-left font-semibold text-primary font-mono md:p-3.5 md:px-4">{{ product.id }}</td>
+            <td class="py-2.5 px-2 text-left font-semibold text-gray-800 md:p-3.5 md:px-4">{{ product.name }}</td>
+            <td class="py-2.5 px-2 text-left font-semibold text-emerald-600 md:p-3.5 md:px-4">{{ product.quantity }}</td>
+            <td class="py-2.5 px-2 text-left text-gray-800 md:p-3.5 md:px-4">{{ product.unit }}</td>
+            <td class="py-2.5 px-2 text-left font-semibold text-danger-dark md:p-3.5 md:px-4">{{ formatPrice(product.price) }}</td>
+            <td class="py-2.5 px-2 text-left text-gray-500 text-xs md:p-3.5 md:px-4">{{ formatDate(product.importDate) }}</td>
+            <td class="py-2.5 px-2 whitespace-nowrap md:p-3.5 md:px-4">
+              <Button @click="showDetails(product)" variant="primary" size="small" class="mr-1.5">
                 Chi tiết
               </Button>
               <template v-if="isUserAdmin">
-                <Button @click="startEdit(product)" variant="edit" size="small">
+                <Button @click="startEdit(product)" variant="edit" size="small" class="mr-1.5">
                   Sửa
                 </Button>
-                <Button @click="deleteProduct(product.id)" variant="delete" size="small">
+                <Button @click="deleteProduct(product.id)" variant="delete" size="small" class="mr-1.5">
                   Xóa
                 </Button>
               </template>
             </td>
           </tr>
-          <tr v-else class="edit-row">
-            <td class="code-cell">{{ product.id }}</td>
-            <td>
-              <BaseInput
-                v-model="editForm.name"
-                label=""
-                placeholder="Tên sản phẩm"
-              />
+          <tr v-else class="border-b border-gray-200">
+            <td class="p-2 font-semibold text-primary font-mono">{{ product.id }}</td>
+            <td class="p-2">
+              <div class="mb-0">
+                <BaseInput
+                  v-model="editForm.name"
+                  label=""
+                  placeholder="Tên sản phẩm"
+                />
+              </div>
             </td>
-            <td>
-              <NumberInput
-                v-model="editForm.quantity"
-                label=""
-                placeholder="Số lượng"
-              />
+            <td class="p-2">
+              <div class="mb-0">
+                <NumberInput
+                  v-model="editForm.quantity"
+                  label=""
+                  placeholder="Số lượng"
+                  class="mb-3"
+                />
+              </div>
             </td>
-            <td>
-              <BaseInput
-                v-model="editForm.unit"
-                label=""
-                placeholder="Đơn vị"
-              />
+            <td class="p-2">
+              <div class="mb-0">
+                <BaseInput
+                  v-model="editForm.unit"
+                  label=""
+                  placeholder="Đơn vị"
+                />
+              </div>
             </td>
-            <td>
-              <NumberInput
-                v-model="editForm.price"
-                label=""
-                placeholder="Giá"
-              />
+            <td class="p-2">
+              <div class="mb-0">
+                <NumberInput
+                  v-model="editForm.price"
+                  label=""
+                  placeholder="Giá"
+                  class="mb-3"
+                />
+              </div>
             </td>
-            <td>
-              <DateInput v-model="editForm.importDate" label="" />
+            <td class="p-2">
+              <div class="mb-0">
+                <DateInput v-model="editForm.importDate" label="" />
+              </div>
             </td>
-            <td class="action-cell">
-              <Button @click="saveEdit(product.id)" variant="save" size="small">
+            <td class="p-2 whitespace-nowrap">
+              <Button @click="saveEdit(product.id)" variant="save" size="small" class="mr-1.5">
                 Lưu
               </Button>
-              <Button @click="cancelEdit" variant="cancel" size="small">
+              <Button @click="cancelEdit" variant="cancel" size="small" class="mr-1.5">
                 Hủy
               </Button>
             </td>
@@ -253,32 +269,31 @@ function resetFilters() {
       </tbody>
     </table>
 
-    <!-- Detail Modal -->
     <Modal
       :show="showDetailModal"
       title="Chi tiết sản phẩm"
       @close="showDetailModal = false"
     >
-      <div v-if="selectedProduct" class="detail-content">
-        <div class="detail-item">
-          <label>Mã sản phẩm:</label>
-          <span>{{ selectedProduct.id }}</span>
+      <div v-if="selectedProduct" class="flex flex-col gap-3">
+        <div class="flex justify-between pb-2 border-b border-gray-100">
+          <label class="font-semibold text-gray-500">Mã sản phẩm:</label>
+          <span class="text-gray-800">{{ selectedProduct.id }}</span>
         </div>
-        <div class="detail-item">
-          <label>Tên sản phẩm:</label>
-          <span>{{ selectedProduct.name }}</span>
+        <div class="flex justify-between pb-2 border-b border-gray-100">
+          <label class="font-semibold text-gray-500">Tên sản phẩm:</label>
+          <span class="text-gray-800">{{ selectedProduct.name }}</span>
         </div>
-        <div class="detail-item">
-          <label>Số lượng:</label>
-          <span>{{ selectedProduct.quantity }} {{ selectedProduct.unit }}</span>
+        <div class="flex justify-between pb-2 border-b border-gray-100">
+          <label class="font-semibold text-gray-500">Số lượng:</label>
+          <span class="text-gray-800">{{ selectedProduct.quantity }} {{ selectedProduct.unit }}</span>
         </div>
-        <div class="detail-item highlight">
-          <label>Đơn giá:</label>
-          <span>{{ formatPrice(selectedProduct.price) }}</span>
+        <div class="flex justify-between mt-2 border-b-0 text-lg">
+          <label class="font-semibold text-gray-500">Đơn giá:</label>
+          <span class="text-danger-dark font-bold">{{ formatPrice(selectedProduct.price) }}</span>
         </div>
-        <div class="detail-item">
-          <label>Ngày nhập:</label>
-          <span>{{ formatDate(selectedProduct.importDate) }}</span>
+        <div class="flex justify-between pb-2 border-b border-gray-100">
+          <label class="font-semibold text-gray-500">Ngày nhập:</label>
+          <span class="text-gray-800">{{ formatDate(selectedProduct.importDate) }}</span>
         </div>
       </div>
     </Modal>
@@ -286,208 +301,7 @@ function resetFilters() {
 </template>
 
 <style scoped>
-.detail-content {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.detail-item {
-  display: flex;
-  justify-content: space-between;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.detail-item label {
-  font-weight: 600;
-  color: var(--text-muted);
-}
-
-.detail-item span {
-  color: var(--text-main);
-}
-
-.detail-item.highlight {
-  margin-top: 8px;
-  border-bottom: none;
-  font-size: 1.1em;
-}
-
-.detail-item.highlight span {
-  color: var(--danger-dark);
-  font-weight: 700;
-}
-
-.table-container {
-  overflow-x: auto;
-  background: var(--bg-card);
-  border-radius: 8px;
-  box-shadow: var(--shadow-sm);
-}
-
-.filter-controls {
-  padding: 20px;
-  background: #f9fafb;
-  border-bottom: 1px solid var(--border-color);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  align-items: flex-end;
-}
-
-.filter-controls .filter-group :deep(.input-wrapper),
-.filter-controls .sort-group :deep(.input-wrapper) {
+.filter-controls :deep(.mb-3) {
   margin-bottom: 0;
-}
-
-.filter-group,
-.sort-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-width: 200px;
-}
-
-.filter-group label,
-.sort-group label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #374151;
-}
-
-.sort-select {
-  width: 100%;
-  padding: 9px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-  background: white;
-  cursor: pointer;
-  transition: border-color 0.3s;
-  box-sizing: border-box;
-}
-
-.sort-select:focus {
-  outline: none;
-  border-color: var(--primary-color);
-}
-
-.reset-btn {
-  width: auto;
-  padding-inline: 16px;
-  margin-left: auto;
-}
-
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-}
-
-.data-table thead {
-  background: var(--bg-table-header);
-  color: white;
-}
-
-.data-table th {
-  padding: 16px;
-  text-align: left;
-  font-weight: 600;
-  text-transform: uppercase;
-  font-size: 12px;
-  letter-spacing: 0.5px;
-}
-
-.data-table tbody tr {
-  border-bottom: 1px solid var(--border-color);
-  transition: background-color 0.2s;
-}
-
-.data-table tbody tr:hover {
-  background-color: #f9fafb;
-}
-
-.data-table tbody tr:last-child {
-  border-bottom: none;
-}
-
-.data-table td {
-  padding: 14px 16px;
-  color: var(--text-main);
-}
-
-.empty-row td {
-  padding: 40px;
-  text-align: center;
-}
-
-.empty-message {
-  color: #9ca3af;
-  font-style: italic;
-}
-
-.code-cell {
-  text-align: left;
-  font-weight: 600;
-  color: var(--primary-color);
-}
-
-.name-cell {
-  text-align: left;
-  font-weight: 600;
-  color: #1f2937;
-}
-
-.number-cell {
-  text-align: left;
-  font-weight: 600;
-  color: #059669;
-}
-
-.price-cell {
-  text-align: left;
-  font-weight: 600;
-  color: var(--danger-dark);
-}
-
-.date-cell {
-  color: var(--text-muted);
-  font-size: 13px;
-}
-
-.action-cell {
-  white-space: nowrap;
-}
-
-.action-cell .btn {
-  margin-right: 6px;
-}
-
-.edit-row td {
-  padding: 8px;
-}
-
-.edit-row .base-input {
-  margin-bottom: 0;
-}
-
-@media (max-width: 768px) {
-  .table-container {
-    border-radius: 4px;
-  }
-
-  .filter-controls {
-    flex-direction: column;
-  }
-
-  .data-table {
-    font-size: 12px;
-  }
-
-  .data-table th,
-  .data-table td {
-    padding: 10px 8px;
-  }
 }
 </style>

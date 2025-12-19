@@ -35,7 +35,6 @@ const editForm = ref({
   monthlyHours: "",
 });
 
-// Filter và Sort
 const salaryFilter = ref("");
 const birthDateSort = ref<"none" | "oldest" | "newest">("none");
 const salarySort = ref<"none" | "low" | "high">("none");
@@ -43,13 +42,11 @@ const salarySort = ref<"none" | "low" | "high">("none");
 const filteredAndSortedEmployees = computed(() => {
   let result = [...employees.value];
 
-  // Filter theo lương
   if (salaryFilter.value) {
     const filterValue = Number(salaryFilter.value);
     result = result.filter((e) => e.totalSalary <= filterValue);
   }
 
-  // Sort theo ngày sinh
   if (birthDateSort.value !== "none") {
     result.sort((a, b) => {
       const dateA = new Date(a.birthDate).getTime();
@@ -58,7 +55,6 @@ const filteredAndSortedEmployees = computed(() => {
     });
   }
 
-  // Sort theo lương
   if (salarySort.value !== "none") {
     result.sort((a, b) => {
       return salarySort.value === "low"
@@ -123,11 +119,10 @@ function resetFilters() {
 </script>
 
 <template>
-  <div class="table-container">
-    <!-- Filter và Sort Controls -->
-    <div class="filter-controls">
-      <div class="filter-group">
-        <label>Lọc theo lương tối đa:</label>
+  <div class="overflow-x-auto bg-white rounded shadow-sm md:rounded-lg">
+    <div class="p-5 bg-gray-50 border-b border-gray-200 flex flex-col gap-5 items-end md:flex-row md:flex-wrap">
+      <div class="flex flex-col gap-2 min-w-[200px]">
+        <label class="text-xs font-semibold text-gray-700">Lọc theo lương tối đa:</label>
         <NumberInput
           v-model="salaryFilter"
           placeholder="Nhập lương tối đa"
@@ -135,18 +130,24 @@ function resetFilters() {
         />
       </div>
 
-      <div class="sort-group">
-        <label>Sắp xếp theo ngày sinh:</label>
-        <select v-model="birthDateSort" class="sort-select">
+      <div class="flex flex-col gap-2 min-w-[200px]">
+        <label class="text-xs font-semibold text-gray-700">Sắp xếp theo ngày sinh:</label>
+        <select 
+          v-model="birthDateSort" 
+          class="w-full p-2.5 border border-gray-300 rounded text-sm bg-white cursor-pointer transition-colors box-border h-[42px] focus:outline-none focus:border-primary"
+        >
           <option value="none">Không sắp xếp</option>
           <option value="oldest">Cũ nhất → Mới nhất</option>
           <option value="newest">Mới nhất → Cũ nhất</option>
         </select>
       </div>
 
-      <div class="sort-group">
-        <label>Sắp xếp theo lương:</label>
-        <select v-model="salarySort" class="sort-select">
+      <div class="flex flex-col gap-2 min-w-[200px]">
+        <label class="text-xs font-semibold text-gray-700">Sắp xếp theo lương:</label>
+        <select 
+          v-model="salarySort" 
+          class="w-full p-2.5 border border-gray-300 rounded text-sm bg-white cursor-pointer transition-colors box-border h-[42px] focus:outline-none focus:border-primary"
+        >
           <option value="none">Không sắp xếp</option>
           <option value="low">Thấp → Cao</option>
           <option value="high">Cao → Thấp</option>
@@ -158,23 +159,23 @@ function resetFilters() {
       </Button>
     </div>
 
-    <table class="data-table">
-      <thead>
+    <table class="w-full border-collapse text-xs md:text-sm">
+      <thead class="bg-gradient-to-r from-primary to-primary-dark text-white">
         <tr>
-          <th>Mã</th>
-          <th>Tên</th>
-          <th>Ngày sinh</th>
-          <th>CCCD</th>
-          <th>Lương/giờ</th>
-          <th>Giờ làm</th>
-          <th>Tổng lương</th>
-          <th>Thao tác</th>
+          <th class="py-2.5 px-2 text-left font-semibold uppercase text-xs tracking-wider md:p-4">Mã</th>
+          <th class="py-2.5 px-2 text-left font-semibold uppercase text-xs tracking-wider md:p-4">Tên</th>
+          <th class="py-2.5 px-2 text-left font-semibold uppercase text-xs tracking-wider md:p-4">Ngày sinh</th>
+          <th class="py-2.5 px-2 text-left font-semibold uppercase text-xs tracking-wider md:p-4">CCCD</th>
+          <th class="py-2.5 px-2 text-left font-semibold uppercase text-xs tracking-wider md:p-4">Lương/giờ</th>
+          <th class="py-2.5 px-2 text-left font-semibold uppercase text-xs tracking-wider md:p-4">Giờ làm</th>
+          <th class="py-2.5 px-2 text-left font-semibold uppercase text-xs tracking-wider md:p-4">Tổng lương</th>
+          <th class="py-2.5 px-2 text-left font-semibold uppercase text-xs tracking-wider md:p-4">Thao tác</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-if="filteredAndSortedEmployees.length === 0" class="empty-row">
-          <td colspan="8">
-            <div class="empty-message">
+        <tr v-if="filteredAndSortedEmployees.length === 0">
+          <td colspan="8" class="p-10 text-center">
+            <div class="text-gray-400 italic">
               Chưa có dữ liệu nhân viên. Vui lòng thêm nhân viên hoặc đợi dữ liệu
               được tải.
             </div>
@@ -186,71 +187,82 @@ function resetFilters() {
         >
           <tr
             v-if="editingEmployee !== employee.employeeId"
-            class="data-row"
+            class="border-b border-gray-200 transition-colors hover:bg-gray-50 last:border-b-0"
           >
-            <td class="code-cell">{{ employee.employeeId }}</td>
-            <td class="name-cell">{{ employee.name }}</td>
-            <td class="date-cell">{{ formatDate(employee.birthDate) }}</td>
-            <td class="id-cell">{{ employee.citizenId }}</td>
-            <td class="money-cell">
+            <td class="py-2.5 px-2 text-left font-semibold text-primary font-mono md:p-3.5 md:px-4">{{ employee.employeeId }}</td>
+            <td class="py-2.5 px-2 text-left font-semibold text-gray-800 md:p-3.5 md:px-4">{{ employee.name }}</td>
+            <td class="py-2.5 px-2 text-left text-gray-500 text-xs md:p-3.5 md:px-4">{{ formatDate(employee.birthDate) }}</td>
+            <td class="py-2.5 px-2 text-left text-gray-500 text-xs font-mono md:p-3.5 md:px-4">{{ employee.citizenId }}</td>
+            <td class="py-2.5 px-2 text-left font-semibold text-emerald-600 md:p-3.5 md:px-4">
               {{ employee.salaryPerHour.toLocaleString("vi-VN") }} đ
             </td>
-            <td class="number-cell">{{ employee.monthlyHours }}</td>
-            <td class="money-cell total">
+            <td class="py-2.5 px-2 text-left font-semibold text-emerald-600 md:p-3.5 md:px-4">{{ employee.monthlyHours }}</td>
+            <td class="py-2.5 px-2 text-left font-semibold text-danger-dark text-base md:p-3.5 md:px-4">
               {{ employee.totalSalary.toLocaleString("vi-VN") }} đ
             </td>
-            <td class="action-cell">
-              <Button @click="showDetails(employee)" variant="primary" size="small">
+            <td class="py-2.5 px-2 whitespace-nowrap md:p-3.5 md:px-4">
+              <Button @click="showDetails(employee)" variant="primary" size="small" class="mr-1.5">
                 Chi tiết
               </Button>
               <template v-if="isUserAdmin">
-                <Button @click="startEdit(employee)" variant="edit" size="small">
+                <Button @click="startEdit(employee)" variant="edit" size="small" class="mr-1.5">
                   Sửa
                 </Button>
                 <Button
                   @click="deleteEmployee(employee.employeeId)"
                   variant="delete"
                   size="small"
+                  class="mr-1.5"
                 >
                   Xóa
                 </Button>
               </template>
             </td>
           </tr>
-          <tr v-else class="edit-row">
-            <td class="code-cell">{{ employee.employeeId }}</td>
-            <td>
-              <BaseInput
-                v-model="editForm.name"
-                label=""
-                placeholder="Tên nhân viên"
-              />
+          <tr v-else class="border-b border-gray-200">
+            <td class="p-2 font-semibold text-primary font-mono">{{ employee.employeeId }}</td>
+            <td class="p-2">
+              <div class="mb-0">
+                <BaseInput
+                  v-model="editForm.name"
+                  label=""
+                  placeholder="Tên nhân viên"
+                />
+              </div>
             </td>
-            <td>
-              <DateInput v-model="editForm.birthDate" label="" />
+            <td class="p-2">
+              <div class="mb-0">
+                <DateInput v-model="editForm.birthDate" label="" />
+              </div>
             </td>
-            <td>
-              <BaseInput
-                v-model="editForm.citizenId"
-                label=""
-                placeholder="Số CCCD"
-              />
+            <td class="p-2">
+              <div class="mb-0">
+                <BaseInput
+                  v-model="editForm.citizenId"
+                  label=""
+                  placeholder="Số CCCD"
+                />
+              </div>
             </td>
-            <td>
-              <NumberInput
-                v-model="editForm.salaryPerHour"
-                label=""
-                placeholder="Lương/giờ"
-              />
+            <td class="p-2">
+              <div class="mb-0">
+                <NumberInput
+                  v-model="editForm.salaryPerHour"
+                  label=""
+                  placeholder="Lương/giờ"
+                />
+              </div>
             </td>
-            <td>
-              <NumberInput
-                v-model="editForm.monthlyHours"
-                label=""
-                placeholder="Giờ làm/tháng"
-              />
+            <td class="p-2">
+              <div class="mb-0">
+                <NumberInput
+                  v-model="editForm.monthlyHours"
+                  label=""
+                  placeholder="Giờ làm/tháng"
+                />
+              </div>
             </td>
-            <td class="money-cell total">
+            <td class="p-2 text-left font-semibold text-danger-dark text-base">
               {{
                 (
                   Number(editForm.salaryPerHour) *
@@ -259,11 +271,11 @@ function resetFilters() {
               }}
               đ
             </td>
-            <td class="action-cell">
-              <Button @click="saveEdit(employee.employeeId)" variant="save" size="small">
+            <td class="p-2 whitespace-nowrap">
+              <Button @click="saveEdit(employee.employeeId)" variant="save" size="small" class="mr-1.5">
                 Lưu
               </Button>
-              <Button @click="cancelEdit" variant="cancel" size="small">
+              <Button @click="cancelEdit" variant="cancel" size="small" class="mr-1.5">
                 Hủy
               </Button>
             </td>
@@ -272,40 +284,39 @@ function resetFilters() {
       </tbody>
     </table>
 
-    <!-- Detail Modal -->
     <Modal
       :show="showDetailModal"
       title="Chi tiết nhân viên"
       @close="showDetailModal = false"
     >
-      <div v-if="selectedEmployee" class="detail-content">
-        <div class="detail-item">
-          <label>Mã nhân viên:</label>
-          <span>{{ selectedEmployee.employeeId }}</span>
+      <div v-if="selectedEmployee" class="flex flex-col gap-3">
+        <div class="flex justify-between pb-2 border-b border-gray-100">
+          <label class="font-semibold text-gray-500">Mã nhân viên:</label>
+          <span class="text-gray-800">{{ selectedEmployee.employeeId }}</span>
         </div>
-        <div class="detail-item">
-          <label>Họ tên:</label>
-          <span>{{ selectedEmployee.name }}</span>
+        <div class="flex justify-between pb-2 border-b border-gray-100">
+          <label class="font-semibold text-gray-500">Họ tên:</label>
+          <span class="text-gray-800">{{ selectedEmployee.name }}</span>
         </div>
-        <div class="detail-item">
-          <label>Ngày sinh:</label>
-          <span>{{ formatDate(selectedEmployee.birthDate) }}</span>
+        <div class="flex justify-between pb-2 border-b border-gray-100">
+          <label class="font-semibold text-gray-500">Ngày sinh:</label>
+          <span class="text-gray-800">{{ formatDate(selectedEmployee.birthDate) }}</span>
         </div>
-        <div class="detail-item">
-          <label>Số CCCD:</label>
-          <span>{{ selectedEmployee.citizenId }}</span>
+        <div class="flex justify-between pb-2 border-b border-gray-100">
+          <label class="font-semibold text-gray-500">Số CCCD:</label>
+          <span class="text-gray-800">{{ selectedEmployee.citizenId }}</span>
         </div>
-        <div class="detail-item">
-          <label>Lương mỗi giờ:</label>
-          <span>{{ selectedEmployee.salaryPerHour.toLocaleString("vi-VN") }} đ</span>
+        <div class="flex justify-between pb-2 border-b border-gray-100">
+          <label class="font-semibold text-gray-500">Lương mỗi giờ:</label>
+          <span class="text-gray-800">{{ selectedEmployee.salaryPerHour.toLocaleString("vi-VN") }} đ</span>
         </div>
-        <div class="detail-item">
-          <label>Số giờ làm tháng:</label>
-          <span>{{ selectedEmployee.monthlyHours }} giờ</span>
+        <div class="flex justify-between pb-2 border-b border-gray-100">
+          <label class="font-semibold text-gray-500">Số giờ làm tháng:</label>
+          <span class="text-gray-800">{{ selectedEmployee.monthlyHours }} giờ</span>
         </div>
-        <div class="detail-item highlight">
-          <label>Tổng lương:</label>
-          <span>{{ selectedEmployee.totalSalary.toLocaleString("vi-VN") }} đ</span>
+        <div class="flex justify-between mt-2 border-b-0 text-lg">
+          <label class="font-semibold text-gray-500">Tổng lương:</label>
+          <span class="text-danger-dark font-bold">{{ selectedEmployee.totalSalary.toLocaleString("vi-VN") }} đ</span>
         </div>
       </div>
     </Modal>
@@ -313,222 +324,7 @@ function resetFilters() {
 </template>
 
 <style scoped>
-.detail-content {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.detail-item {
-  display: flex;
-  justify-content: space-between;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.detail-item label {
-  font-weight: 600;
-  color: var(--text-muted);
-}
-
-.detail-item span {
-  color: var(--text-main);
-}
-
-.detail-item.highlight {
-  margin-top: 8px;
-  border-bottom: none;
-  font-size: 1.1em;
-}
-
-.detail-item.highlight span {
-  color: var(--danger-dark);
-  font-weight: 700;
-}
-
-.table-container {
-  overflow-x: auto;
-  background: var(--bg-card);
-  border-radius: 8px;
-  box-shadow: var(--shadow-sm);
-}
-
-.filter-controls {
-  padding: 20px;
-  background: #f9fafb;
-  border-bottom: 1px solid var(--border-color);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  align-items: flex-end;
-}
-
-.filter-controls .filter-group :deep(.input-wrapper),
-.filter-controls .sort-group :deep(.input-wrapper) {
+.filter-controls :deep(.mb-3) {
   margin-bottom: 0;
-}
-
-.filter-group,
-.sort-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-width: 200px;
-}
-
-.filter-group label,
-.sort-group label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #374151;
-}
-
-.sort-select {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-  background: white;
-  cursor: pointer;
-  transition: border-color 0.3s;
-  box-sizing: border-box;
-  height: 42px;
-}
-
-.sort-select:focus {
-  outline: none;
-  border-color: var(--primary-color);
-}
-
-.reset-btn {
-  width: auto;
-  padding-inline: 16px;
-  margin-left: auto;
-}
-
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-}
-
-.data-table thead {
-  background: var(--bg-table-header);
-  color: white;
-}
-
-.data-table th {
-  padding: 16px;
-  text-align: left;
-  font-weight: 600;
-  text-transform: uppercase;
-  font-size: 12px;
-  letter-spacing: 0.5px;
-}
-
-.data-table tbody tr {
-  border-bottom: 1px solid var(--border-color);
-  transition: background-color 0.2s;
-}
-
-.data-table tbody tr:hover {
-  background-color: #f9fafb;
-}
-
-.data-table tbody tr:last-child {
-  border-bottom: none;
-}
-
-.data-table td {
-  padding: 14px 16px;
-  color: var(--text-main);
-}
-
-.empty-row td {
-  padding: 40px;
-  text-align: center;
-}
-
-.empty-message {
-  color: #9ca3af;
-  font-style: italic;
-}
-
-.code-cell {
-  text-align: left;
-  font-weight: 600;
-  color: var(--primary-color);
-}
-
-.name-cell {
-  text-align: left;
-  font-weight: 600;
-  color: #1f2937;
-}
-
-.date-cell {
-  text-align: left;
-  color: var(--text-muted);
-  font-size: 13px;
-}
-
-.id-cell {
-  text-align: left;
-  color: var(--text-muted);
-  font-size: 13px;
-}
-
-.money-cell {
-  text-align: left;
-  font-weight: 600;
-  color: #059669;
-}
-
-.money-cell.total {
-  text-align: left;
-  color: var(--danger-dark);
-  font-size: 15px;
-}
-
-.number-cell {
-  text-align: left;
-  font-weight: 600;
-  color: #059669;
-}
-
-.action-cell {
-  white-space: nowrap;
-}
-
-.action-cell .btn {
-  margin-right: 6px;
-}
-
-.edit-row td {
-  padding: 8px;
-}
-
-.edit-row .base-input {
-  margin-bottom: 0;
-}
-
-@media (max-width: 768px) {
-  .table-container {
-    border-radius: 4px;
-  }
-
-  .filter-controls {
-    flex-direction: column;
-  }
-
-  .data-table {
-    font-size: 12px;
-  }
-
-  .data-table th,
-  .data-table td {
-    padding: 10px 8px;
-  }
 }
 </style>

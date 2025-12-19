@@ -28,7 +28,7 @@ const filterOptions = [
 </script>
 <template>
   <DefaultLayout>
-    <h1>Quản lý sản phẩm</h1>
+    <h1 class="text-2xl font-bold mb-5">Quản lý sản phẩm</h1>
     <ProductForm v-if="isUserAdmin" />
     
     <ProductTable />

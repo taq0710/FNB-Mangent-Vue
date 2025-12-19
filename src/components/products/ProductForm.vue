@@ -26,32 +26,34 @@ function addProduct() {
     importDate: form.importDate,
   });
 
-  // Reset form
   Object.keys(form).forEach((key) => (form[key] = ""));
 }
 </script>
 
 <template>
-  <div class="form">
-    <h3>Thêm sản phẩm</h3>
+  <div class="mb-5 p-5 bg-white rounded-lg shadow-sm">
+    <h3 class="mb-5 text-gray-800">Thêm sản phẩm</h3>
 
     <BaseInput
       v-model="form.name"
       placeholder="Tên sản phẩm"
       label="Tên sản phẩm"
+      class="mb-3"
     />
     <NumberInput
       v-model="form.quantity"
       placeholder="Số lượng"
       label="Số lượng"
+      class="mb-3"
     />
-    <BaseInput v-model="form.unit" placeholder="Đơn vị" label="Đơn vị" />
+    <BaseInput v-model="form.unit" placeholder="Đơn vị" label="Đơn vị" class="mb-3" />
     <NumberInput
       v-model="form.price"
       placeholder="Giá sản phẩm"
       label="Giá (VNĐ)"
+      class="mb-3"
     />
-    <DateInput v-model="form.importDate" label="Ngày nhập" />
+    <DateInput v-model="form.importDate" label="Ngày nhập" class="mb-3" />
 
     <Button @click="addProduct" variant="primary" full-width class="submit-button">
       Thêm

@@ -115,9 +115,9 @@ const chartOptions = {
 </script>
 
 <template>
-    <div class="chart-container">
-        <h3>Sản phẩm bán ra</h3>
-        <div class="chart-controls">
+    <div class="bg-white p-5 rounded-lg shadow-sm mb-5">
+        <h3 class="text-lg font-semibold mb-5">Sản phẩm bán ra</h3>
+        <div class="flex gap-2.5 mb-5">
             <Button
                 v-for="period in periods"
                 :key="period"
@@ -128,28 +128,8 @@ const chartOptions = {
                 {{ periodLabels[period] }}
             </Button>
         </div>
-        <div class="chart-wrapper">
+        <div class="h-[300px]">
             <Bar :data="chartData" :options="chartOptions" />
         </div>
     </div>
 </template>
-
-<style scoped>
-.chart-container {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-}
-
-.chart-controls {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.chart-wrapper {
-    height: 300px;
-}
-</style>

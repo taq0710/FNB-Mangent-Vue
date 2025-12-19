@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed } from 'vue';
+
 interface Props {
   variant?: 'primary' | 'edit' | 'delete' | 'save' | 'cancel' | 'secondary' | 'ghost';
   size?: 'small' | 'medium' | 'large' | 'none';
@@ -18,132 +20,41 @@ const props = withDefaults(defineProps<Props>(), {
 defineEmits<{
   click: [event: MouseEvent];
 }>();
+
+const buttonClasses = computed(() => {
+  const base = 'border-none rounded font-medium cursor-pointer transition-all duration-300 inline-flex items-center justify-center disabled:opacity-60 disabled:cursor-not-allowed';
+  
+  const sizes = {
+    none: 'p-0 text-inherit',
+    small: 'px-3 py-1.5 text-xs',
+    medium: 'p-3 text-base',
+    large: 'px-5 py-3.5 text-lg',
+  };
+  
+  const variants = {
+    primary: 'bg-primary text-white hover:bg-primary-dark',
+    edit: 'bg-primary text-white hover:bg-primary-dark px-3 py-1.5 text-xs',
+    delete: 'bg-danger text-white hover:bg-danger-dark px-3 py-1.5 text-xs',
+    save: 'bg-info text-white hover:bg-info-dark px-3 py-1.5 text-xs',
+    cancel: 'bg-secondary text-white hover:bg-gray-600 px-3 py-1.5 text-xs',
+    secondary: 'bg-secondary text-white hover:bg-gray-600',
+    ghost: 'bg-transparent text-inherit hover:bg-black/5',
+  };
+  
+  const width = props.fullWidth ? 'w-full' : '';
+  
+  return `${base} ${sizes[props.size]} ${variants[props.variant]} ${width}`;
+});
 </script>
 
 <template>
   <button
     :type="type"
     :disabled="disabled"
-    :class="['btn', `btn-${variant}`, `btn-${size}`, { 'btn-full-width': fullWidth }]"
+    :class="buttonClasses"
     @click="$emit('click', $event)"
   >
     <slot />
   </button>
 </template>
-
-<style scoped>
-.btn {
-  border: none;
-  border-radius: 4px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* Sizes */
-.btn-none {
-  padding: 0;
-  font-size: inherit;
-}
-
-.btn-small {
-  padding: 6px 12px;
-  font-size: 12px;
-}
-
-.btn-medium {
-  padding: 12px;
-  font-size: 16px;
-}
-
-.btn-large {
-  padding: 14px 20px;
-  font-size: 18px;
-}
-
-/* Variants */
-.btn-primary {
-  background: var(--primary-color);
-  color: white;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background: var(--primary-dark);
-}
-
-.btn-edit {
-  background: var(--primary-color);
-  color: white;
-  padding: 6px 12px;
-  font-size: 12px;
-}
-
-.btn-edit:hover:not(:disabled) {
-  background: var(--primary-dark);
-}
-
-.btn-delete {
-  background: var(--danger-color);
-  color: white;
-  padding: 6px 12px;
-  font-size: 12px;
-}
-
-.btn-delete:hover:not(:disabled) {
-  background: var(--danger-dark);
-}
-
-.btn-save {
-  background: var(--info-color);
-  color: white;
-  padding: 6px 12px;
-  font-size: 12px;
-}
-
-.btn-save:hover:not(:disabled) {
-  background: var(--info-dark);
-}
-
-.btn-cancel {
-  background: var(--secondary-color);
-  color: white;
-  padding: 6px 12px;
-  font-size: 12px;
-}
-
-.btn-cancel:hover:not(:disabled) {
-  background: #4b5563;
-}
-
-.btn-secondary {
-  background: var(--secondary-color);
-  color: white;
-}
-
-.btn-secondary:hover:not(:disabled) {
-  background: #4b5563;
-}
-
-.btn-ghost {
-  background: transparent;
-  color: inherit;
-}
-
-.btn-ghost:hover:not(:disabled) {
-  background: rgba(0, 0, 0, 0.05);
-}
-
-/* Full width */
-.btn-full-width {
-  width: 100%;
-}
-</style>
 

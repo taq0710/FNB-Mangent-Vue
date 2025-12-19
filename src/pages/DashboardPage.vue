@@ -56,12 +56,12 @@ onMounted(async () => {
 
 <template>
   <DefaultLayout>
-    <h1>Dashboard</h1>
+    <h1 class="text-2xl font-bold mb-5">Dashboard</h1>
 
-    <div class="cards">
-      <div class="card">
-        <h3>Tổng doanh thu</h3>
-        <p class="amount">
+    <div class="flex gap-5 mb-8">
+      <div class="flex-1 p-5 bg-white rounded-lg shadow-sm">
+        <h3 class="m-0 mb-2.5 text-gray-600 text-sm font-normal">Tổng doanh thu</h3>
+        <p class="m-0 text-2xl font-bold text-primary">
           {{
             new Intl.NumberFormat("vi-VN", {
               style: "currency",
@@ -70,55 +70,19 @@ onMounted(async () => {
           }}
         </p>
       </div>
-      <div class="card">
-        <h3>Sản phẩm bán ra</h3>
-        <p class="amount">{{ totalProductsSold.toLocaleString("vi-VN") }}</p>
+      <div class="flex-1 p-5 bg-white rounded-lg shadow-sm">
+        <h3 class="m-0 mb-2.5 text-gray-600 text-sm font-normal">Sản phẩm bán ra</h3>
+        <p class="m-0 text-2xl font-bold text-primary">{{ totalProductsSold.toLocaleString("vi-VN") }}</p>
       </div>
-      <div class="card">
-        <h3>Nhân viên</h3>
-        <p class="amount">{{ totalEmployees }}</p>
+      <div class="flex-1 p-5 bg-white rounded-lg shadow-sm">
+        <h3 class="m-0 mb-2.5 text-gray-600 text-sm font-normal">Nhân viên</h3>
+        <p class="m-0 text-2xl font-bold text-primary">{{ totalEmployees }}</p>
       </div>
     </div>
 
-    <div class="charts">
+    <div class="flex flex-col gap-5">
       <RevenueChart />
       <ProductSoldChart />
     </div>
   </DefaultLayout>
 </template>
-
-<style scoped>
-.cards {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 30px;
-}
-
-.card {
-  flex: 1;
-  padding: 20px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.card h3 {
-  margin: 0 0 10px 0;
-  color: #666;
-  font-size: 14px;
-  font-weight: normal;
-}
-
-.card .amount {
-  margin: 0;
-  font-size: 24px;
-  font-weight: bold;
-  color: #42b883;
-}
-
-.charts {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-</style>

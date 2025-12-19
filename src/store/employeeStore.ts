@@ -32,7 +32,6 @@ export const useEmployeeStore = defineStore("employeeStore", () => {
         ...employees.value[index],
         ...updatedEmployee,
       };
-      // Recalculate total salary if salaryPerHour or monthlyHours changed
       if (updatedEmployee.salaryPerHour || updatedEmployee.monthlyHours) {
         employees.value[index].totalSalary =
           employees.value[index].salaryPerHour *

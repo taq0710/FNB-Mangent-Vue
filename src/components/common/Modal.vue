@@ -13,24 +13,32 @@ defineEmits<{
 
 <template>
   <Transition name="modal">
-    <div v-if="show" class="modal-mask" @click="$emit('close')">
-      <div class="modal-container" @click.stop>
-        <div class="modal-header">
-          <h3>{{ title }}</h3>
+    <div 
+      v-if="show" 
+      class="fixed z-[9998] inset-0 bg-black/50 flex justify-center items-center transition-opacity duration-300 ease-in-out"
+      @click="$emit('close')"
+    >
+      <div 
+        class="w-[500px] max-w-[90%] bg-white rounded-lg shadow-lg transition-all duration-300 ease-in-out flex flex-col modal-container"
+        @click.stop
+      >
+        <div class="px-5 py-4 border-b border-gray-200 flex justify-between items-center">
+          <h3 class="m-0 text-[#42b883]">{{ title }}</h3>
           <Button
             variant="ghost"
             size="none"
-            class="close-btn"
+            class="text-2xl w-8 h-8 text-gray-400 hover:text-gray-700"
             @click="$emit('close')"
-            >&times;</Button
           >
+            &times;
+          </Button>
         </div>
 
-        <div class="modal-body">
+        <div class="p-5 max-h-[70vh] overflow-y-auto">
           <slot></slot>
         </div>
 
-        <div class="modal-footer">
+        <div class="px-5 py-4 border-t border-gray-200 flex justify-end">
           <slot name="footer">
             <Button @click="$emit('close')">Đóng</Button>
           </slot>
@@ -41,73 +49,7 @@ defineEmits<{
 </template>
 
 <style scoped>
-.modal-mask {
-  position: fixed;
-  z-index: 9998;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: opacity 0.3s ease;
-}
-
-.modal-container {
-  width: 500px;
-  max-width: 90%;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
-  transition: all 0.3s ease;
-  display: flex;
-  flex-direction: column;
-}
-
-.modal-header {
-  padding: 16px 20px;
-  border-bottom: 1px solid #eee;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.modal-header h3 {
-  margin: 0;
-  color: #42b883;
-}
-
-.close-btn {
-  font-size: 24px;
-  width: 32px;
-  height: 32px;
-  color: #999;
-}
-
-.close-btn:hover {
-  color: #333;
-}
-
-.modal-body {
-  padding: 20px;
-  max-height: 70vh;
-  overflow-y: auto;
-}
-
-.modal-footer {
-  padding: 16px 20px;
-  border-top: 1px solid #eee;
-  display: flex;
-  justify-content: flex-end;
-}
-
-/* Transitions */
-.modal-enter-from {
-  opacity: 0;
-}
-
+.modal-enter-from,
 .modal-leave-to {
   opacity: 0;
 }

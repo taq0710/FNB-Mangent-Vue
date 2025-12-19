@@ -44,19 +44,15 @@ const router = createRouter({
   routes,
 });
 
-// Route guard - kiểm tra authentication
 router.beforeEach(async (to, _from, next) => {
   const requiresAuth = to.meta.requiresAuth !== false;
   const authenticated = await isAuthenticated();
 
   if (requiresAuth && !authenticated) {
-    // Nếu route yêu cầu auth nhưng chưa đăng nhập -> chuyển đến login
     next({ name: "login" });
   } else if (to.name === "login" && authenticated) {
-    // Nếu đã đăng nhập nhưng vào trang login -> chuyển đến dashboard
     next({ name: "dashboard" });
   } else {
-    // Cho phép điều hướng
     next();
   }
 });
